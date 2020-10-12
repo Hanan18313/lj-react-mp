@@ -1,8 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Table, Row, Col, Button, Popconfirm, Divider, Avatar } from 'antd';
+import { Table, Row, Col, Button, Popconfirm, Divider, Avatar, message } from 'antd';
 import React from 'react';
 import Fetch from '../../config/fetch';
 import CONFIG from '../../config/config'
+import Axios from 'axios';
+import config from '../../config/config';
 const { DOMAIN, url_list } = CONFIG
 
 export default class PrizeList extends React.Component {
@@ -45,6 +47,21 @@ export default class PrizeList extends React.Component {
                         <Avatar src={text} shape='square' size={40}/>
                     ) },
                 { title: '轮次', dataIndex: 'round', key: 'round' },
+                { title: '类别', dataIndex: 'type', key: 'type',
+                    render: (text) => (
+                        text = text === 'scene' ? '现场奖品' : '直播间奖品'
+                    ),
+                    filters: [
+                        {
+                            text: '直播间奖品',
+                            value: 'live'
+                        },
+                        {
+                            text: '现场奖品',
+                            value: 'scene'
+                        }
+                    ]
+                },
                 { title: '附加', dataIndex: 'instrct', key: 'instrct' },
                 { title: '操作', dataIndex: 'oper', key: 'oper',render: (text, record) => (
                     <div>
@@ -65,7 +82,6 @@ export default class PrizeList extends React.Component {
             url: url_list.getPrizeList,
             method: 'GET',
         }).then(res => {
-            console.log(res.data.data)
             if(res.data.code === 200) {
                 res.data.data.map(item => {
                     item.img_url = DOMAIN + '/static/upload/' + item.img_url
@@ -80,23 +96,52 @@ export default class PrizeList extends React.Component {
 
     handleDelete = id => {
         const dataSource = [...this.state.dataSource];
-        Fetch({
+        Axios({
             method: 'DELETE',
-            url: url_list.deletePrizeById,
-            data:{
-                id
+            url: config.DOMAIN + config.url_list.deletePrizeById,
+            data: {
+                prizeId: id
             }
         }).then(res => {
             // eslint-disable-next-line react/no-direct-mutation-state
-            this.state.pagination.total = dataSource.length
+            let filterData = dataSource.filter(item => item.id !== id)
+            const pagination = this.state.pagination
+            pagination.total = filterData.length
             this.setState({
-                 dataSource: dataSource.filter(item => item.id !== id),
+                 dataSource: filterData,
+                 pagination: pagination
             });
+            setTimeout(() => {
+                message.success('删除成功')
+            })
         })
     };
 
     handleEdit = id => {
         this.props.history.push(`./editPrize?id=${id}`)
+    }
+
+    handleTableChange = (pagination, filter) => {
+        this.setState({
+            loading: true
+        })
+        Axios({
+            method: 'GET',
+            url: config.DOMAIN + config.url_list.getPrizeList,
+            params: {
+                filter:filter.type
+            },
+        }).then(res => {
+            if(res.data.code === 200) {
+                res.data.data.map(item => {
+                    item.img_url = DOMAIN + '/static/upload/' + item.img_url
+                })
+                this.setState({
+                    dataSource: res.data.data,
+                    loading: false
+                })
+            }
+        })
     }
     render(){
         const { pagination, loading, dataSource, Columns } = this.state
@@ -112,10 +157,11 @@ export default class PrizeList extends React.Component {
                 <Table
                 rowKey={record => record.id}
                 columns={Columns}
-               // scroll={{x:1300, y:500}}
+                scroll={{x:1300, y:500}}
                 pagination={pagination}
                 loading={loading}
                 dataSource={dataSource}
+                onChange={this.handleTableChange}
                 ></Table>
             </div>
         )

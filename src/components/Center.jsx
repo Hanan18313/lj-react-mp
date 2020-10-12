@@ -10,6 +10,7 @@ import '../public/css/Layout.css';
 import '../public/css/App.css'
 import CreatePrize from './exhibition/CreatePrize';
 import EditPrize from './exhibition/EditPrize';
+import DrawPrize from './exhibition/DrawPrize'
 const { url_list, DOMAIN } = CONFIG
 const { Sider, Content }  = Layout;
 const SubMenu = Menu.SubMenu;
@@ -26,7 +27,6 @@ export default class Center extends React.Component {
             url: url_list.getMenusSider,
             method: "GET",
         }).then(res => {
-            console.log(res)
             if(res.data.code === 200) {}
             this.setState({
                 menus: res.data.data
@@ -109,6 +109,7 @@ export default class Center extends React.Component {
                                 <Route path="/exhibition/prizes" component={PrizeList}/>
                                 <Route path="/exhibition/createPrize" component={CreatePrize}/>
                                 <Route path="/exhibition/editPrize" component={EditPrize}/>
+                                <Route path='/exhibition/drawPrizes' component={DrawPrize} />
                                 <Redirect from='/' to='/index'/>
                             </Switch>
                         </Content>
