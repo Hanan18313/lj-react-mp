@@ -10,8 +10,8 @@ const config = {
     },
 }
 
-const outer_url = 'http://192.168.50.80:9001'
-//const outer_url = 'https://mp.langjie.com'
+//const outer_url = 'http://192.168.50.80:9001'
+const outer_url = 'https://mp.langjie.com'
 
 
 const url_list = {
@@ -28,7 +28,7 @@ const url_list = {
 }
 
 export default {
-    ...config.dev,
+    ...config.pro,
     url_list,
     outer_url
 }

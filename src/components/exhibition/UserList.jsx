@@ -137,7 +137,6 @@ class EditableCell extends React.Component {
   save = e => {
     const { record, handleSave } = this.props;
     this.form.validateFields((error, values) => {
-        console.log(record.unionid)
         const data = {
             unionId: record.unionid,
             lottery_number: values.lottery_number
@@ -260,7 +259,7 @@ export default class Participants extends React.Component {
             lunchTotal: 0,
         }
         //this.searchValue = React.createRef()
-        this.handleCancel = this.handleCancel.bind(this)
+        //this.handleCancel = this.handleCancel.bind(this)
         this.handleTableChange = this.handleTableChange.bind(this)
         //this.handleCancel = this.handleCancel.bind(this)
         this.handleSave = this.handleSave.bind(this)
@@ -270,12 +269,9 @@ export default class Participants extends React.Component {
         this.Fetch({
             current: 1,
             pageSize: 30,
-            filter: {
-                state: ''
-            }
+            filter: []
         })
 
-        this.handleCancel()
     }
 
     Fetch = (params = {}) => {
@@ -383,18 +379,18 @@ export default class Participants extends React.Component {
         }).catch(e => console.log(e))
     }
 
-    /**
-     * 取消
-     */
-    handleCancel = () => {
-        this.Fetch({
-            current: 1,
-            pageSize: this.state.pagination.pageSize,
-            filter: {
-                state: ''
-            }
-        })
-    }
+    // /**
+    //  * 取消
+    //  */
+    // handleCancel = () => {
+    //     this.Fetch({
+    //         current: 1,
+    //         pageSize: this.state.pagination.pageSize,
+    //         filter: {
+    //             state: ''
+    //         }
+    //     })
+    // }
     render() {
         let { pagination, dataSource, loading, searchValue } = this.state
         let components = {
