@@ -27,6 +27,7 @@ export default class Center extends React.Component {
         openKeys: ['index']
     }
 
+
     componentDidMount() {
         Fetch({
             url: url_list.getMenusSider,
