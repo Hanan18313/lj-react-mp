@@ -207,6 +207,7 @@ class EditableTable extends React.Component {
                 filter:['live']
             },
         }).then(res => {
+          console.log(res)
             if(res.data.code === 200) {
                 res.data.data.map(item => {
                     item.img_url = DOMAIN + '/static/upload/' + item.img_url
