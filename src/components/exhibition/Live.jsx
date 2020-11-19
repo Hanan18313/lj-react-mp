@@ -6,7 +6,9 @@ import CONFIG from '../../config/config'
 import Axios from 'axios';
 import config from '../../config/config';
 import React from 'react'
-import { Table, Input, InputNumber, Popconfirm, Form, Avatar, message } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table, Input, InputNumber, Popconfirm, Avatar, message } from 'antd';
 const { DOMAIN, url_list } = CONFIG
 
 const EditableContext = React.createContext();

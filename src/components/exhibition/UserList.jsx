@@ -1,5 +1,7 @@
 import React from 'react';
-import { Table, Avatar, Input, Button, Row, Col, Form, message, Tag } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table, Avatar, Input, Button, Row, Col, message, Tag } from 'antd';
 import Axios from 'axios';
 import moment from 'moment';
 import '../../public/css/UserListCell.css'
@@ -116,7 +118,7 @@ const EditableRow = ({ forms, index, ...props }) => {
       )
 };
 
- const EditableFormRow = Form.create()(EditableRow);
+const EditableFormRow = Form.create()(EditableRow);
 
 class EditableCell extends React.Component {
   state = {

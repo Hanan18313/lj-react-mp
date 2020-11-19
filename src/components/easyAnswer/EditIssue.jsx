@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { Form, Input, Button, DatePicker, Row, Col, Select, message } from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons'
+import { Form, Icon as LegacyIcon } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Button, DatePicker, Row, Col, Select, message } from 'antd';
+import { CloseOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import Fetch from '../../config/fetch';
 import CONFIG from '../../config/config'
 import Axios from 'axios';
@@ -128,7 +130,7 @@ class AppendIssueItems extends React.Component {
             }
             renderIssueArr.push(
                 <div key={index} style={{width: '50%'}}>
-                    <div style={{display: 'flex', justifyContent: 'flex-end'}}><Button type="primary" type="link" icon="close" onClick={() => this.handleDeleteIssue(index)}></Button></div>
+                    <div style={{display: 'flex', justifyContent: 'flex-end'}}><Button type="primary" type="link" icon={<CloseOutlined />} onClick={() => this.handleDeleteIssue(index)}></Button></div>
                     <div className="issueItem" >{issueItem}</div>
                 </div>
             
@@ -142,7 +144,7 @@ class AppendIssueItems extends React.Component {
                         <Row style={{display: 'flex', alignItems: 'center', margin: '10px 0'}}>
                             <Col style={{display:'flex', justifyContent: 'flex-end'}} span={6}></Col>
                             <Col span={18}>
-                                <Button type="dashed" onClick={() => this.handleAddIssue()} icon={PlusCircleOutlined}>
+                                <Button type="dashed" onClick={() => this.handleAddIssue()} icon={<LegacyIcon type={PlusCircleOutlined} />}>
                                  添加问题
                             </Button></Col>
                         </Row>
@@ -150,7 +152,7 @@ class AppendIssueItems extends React.Component {
                 </div>
                 
             </div>
-        )
+        );
     }
 }
 
