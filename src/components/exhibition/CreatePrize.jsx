@@ -1,6 +1,7 @@
 import React from 'react';
-import { Icon as LegacyIcon } from '@ant-design/compatible';
-import { Table, Form, Upload, Button, Input, Select, Layout, message } from 'antd';
+import { Form, Icon as LegacyIcon } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table, Upload, Button, Input, Select, Layout, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons'
 import config from '../../config/config';
 import Axios from 'axios';

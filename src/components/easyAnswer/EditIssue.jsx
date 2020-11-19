@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import { Icon as LegacyIcon } from '@ant-design/compatible';
-import { Form, Input, Button, DatePicker, Row, Col, Select, message } from 'antd';
+import { Form, Icon as LegacyIcon } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Button, DatePicker, Row, Col, Select, message } from 'antd';
 import { CloseOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import Fetch from '../../config/fetch';
 import CONFIG from '../../config/config'
