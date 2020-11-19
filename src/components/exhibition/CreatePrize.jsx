@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
 import { Table, Form, Upload, Button, Input, Select, Layout, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons'
 import config from '../../config/config';
@@ -116,7 +117,7 @@ class CreatePrize extends React.Component {
                     label={labelProperty[i].label}
                     >
                     <Upload {...props}>
-                        <Button icon={UploadOutlined}>
+                        <Button icon={<LegacyIcon type={UploadOutlined} />}>
                             上传照片
                         </Button>
                     </Upload>
@@ -172,4 +173,4 @@ class CreatePrize extends React.Component {
 }
 const CreatePrizeForm = Form.create()(CreatePrize)
 
- export default CreatePrizeForm
+export default CreatePrizeForm

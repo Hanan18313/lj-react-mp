@@ -1,5 +1,7 @@
 import React from 'react';
-import { Form, Select, Upload, Button, Input } from 'antd';
+import { Form, Icon as LegacyIcon } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Select, Upload, Button, Input } from 'antd';
 import { UploadOutlined } from '@ant-design/icons'
 import config from '../../config/config';
 import Axios from 'axios';
@@ -130,7 +132,7 @@ class EditPrizeForm extends React.Component {
                     label={labelProperty[i].label}
                     >
                     <Upload {...props}>
-                        <Button icon={UploadOutlined}>
+                        <Button icon={<LegacyIcon type={UploadOutlined} />}>
                             上传照片
                         </Button>
                     </Upload>

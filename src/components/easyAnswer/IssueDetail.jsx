@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import { Form, Input, Button, DatePicker, Icon, Row, Col, Select, message, Table, Avatar } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Button, DatePicker, Row, Col, Select, message, Table, Avatar } from 'antd';
 import Fetch from '../../config/fetch';
 import CONFIG from '../../config/config'
 import Axios from 'axios';
