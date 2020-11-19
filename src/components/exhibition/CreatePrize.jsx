@@ -1,5 +1,6 @@
 import React from 'react';
-import { Table, Form, Upload, Button, Input, Select, Layout, message, Icon } from 'antd';
+import { Table, Form, Upload, Button, Input, Select, Layout, message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons'
 import config from '../../config/config';
 import Axios from 'axios';
 const FormItem = Form.Item
@@ -8,6 +9,7 @@ const { url_list, DOMAIN } = config
 
 
 class CreatePrize extends React.Component {
+    formRef = React.createRef()
     constructor(props) {
         
         super()
@@ -114,8 +116,8 @@ class CreatePrize extends React.Component {
                     label={labelProperty[i].label}
                     >
                     <Upload {...props}>
-                        <Button>
-                            <Icon type="upload" />上传照片
+                        <Button icon={UploadOutlined}>
+                            上传照片
                         </Button>
                     </Upload>
                     {getFieldDecorator(i, {
@@ -152,7 +154,7 @@ class CreatePrize extends React.Component {
             }
         }
         return(
-            <Form onSubmit={this.handleSubmit} style={{padding: 24}}>
+            <Form onSubmit={this.handleSubmit} style={{padding: 24}} ref={this.formRef}>
                 <div>
                     {
                         formItem_arr.map((item,index) =>
@@ -168,6 +170,6 @@ class CreatePrize extends React.Component {
         )
     }
 }
-  const CreatePrizeForm = Form.create()(CreatePrize)
+const CreatePrizeForm = Form.create()(CreatePrize)
 
  export default CreatePrizeForm

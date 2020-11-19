@@ -5,7 +5,6 @@ import { message } from 'antd'
 
 const Fetch = async params => {
     const { method, url, queryData, formData } = params
-
     try {
         const result = await Axios({
             url: CONFIG.DOMAIN+url,
@@ -18,6 +17,7 @@ const Fetch = async params => {
         })
         return result
     } catch (error) {
+        console.log(error)
         message.error('请求失败')
     }
 }

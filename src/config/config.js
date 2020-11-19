@@ -6,7 +6,7 @@ const config = {
         DOMAIN: "https://mp.langjie.com"
     },
     test: {
-        DOMAIN: ""
+        DOMAIN: "http://192.168.31.194:9001"
     },
 }
 
@@ -24,11 +24,21 @@ const url_list = {
     updatePrizeInfoById: '/exhibition/prize',
     getUserInfoList: '/exhibition/userInfoList',
     updateUserLotteryNumber: '/exhibition/userLotteryNumber',
-    searchUserInfoByNameOrCompany: '/exhibition/searchUserInfo'
+    searchUserInfoByNameOrCompany: '/exhibition/searchUserInfo',
+    updateLiveRoomWinnerInfo: '/exhibition/liveRoomWinnerInfo',
+    getEasyAnswerTitleList: '/easyAnswer/titleList',
+    updateEasyAnswerTitleInfo: '/easyAnswer/titleInfo',
+    createEasyAnswerTitleInfo: '/easyAnswer/titleInfo',
+    getEasyAnswerTitleById: '/easyAnswer/singleTitleInfo',
+    getEasyAnswerTitleWithAnswerById: '/easyAnswer/singleTitleWithAnswerInfo',
+    deleteEasyAnswerTitleById: '/easyAnswer/titleInfo',
+    getEasyAnswerTitleByIdWithAnswerList: '/easyAnswer/easyAnswerTitleByIdWithAnswerList',
+    exportAnswerInfoListToExcel: '/easyAnswer/exportExcel'
+
 }
 
 export default {
-    ...config.pro,
+    ...config.dev,
     url_list,
     outer_url
 }

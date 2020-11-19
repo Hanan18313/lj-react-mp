@@ -1,15 +1,18 @@
 import React from 'react';
-import { Form, Select, Upload, Button, Icon, Input } from 'antd';
+import { Form, Select, Upload, Button, Input } from 'antd';
+import { UploadOutlined } from '@ant-design/icons'
 import config from '../../config/config';
 import Axios from 'axios';
 const FormItem = Form.Item
 const { Option } = Select
 
 class EditPrizeForm extends React.Component {
+    formRef = React.createRef()
     constructor() {
         super()
         this.state = {
             labelProperty: {
+                prize_ser_num: { label: '编号', rules: [{required: true, message: '请输入编号'}] },
                 prize_name: { label: '奖品名称', rules: [{required: true, message: '请输入奖品名称'}] },
                 price: { label: '价格', rules: [{required: true, message: '请输入价格'}] },
                 round: { label: '轮次', rules: [{required: true, message: '请选择轮次'}] },
@@ -90,8 +93,10 @@ class EditPrizeForm extends React.Component {
             url: config.DOMAIN + config.url_list.getPrizeInfoById,
             params: params
         }).then(res => {
+            console.log(this.formRef.current)
             let data = res.data.data[0]
             this.props.form.setFieldsValue({
+                prize_ser_num: data.prize_prize_ser_num,
                 prize_name: data.prize_prize_name,
                 price: data.prize_price,
                 round: data.prize_round,
@@ -125,8 +130,8 @@ class EditPrizeForm extends React.Component {
                     label={labelProperty[i].label}
                     >
                     <Upload {...props}>
-                        <Button>
-                            <Icon type="upload" />上传照片
+                        <Button icon={UploadOutlined}>
+                            上传照片
                         </Button>
                     </Upload>
                     {getFieldDecorator(i, {
@@ -194,7 +199,7 @@ class EditPrizeForm extends React.Component {
             }
         }
         return(
-            <Form onSubmit={this.handleSubmit} style={{padding: 24}}>
+            <Form onSubmit={this.handleSubmit} style={{padding: 24}} ref={this.formRef}>
                 <div>
                     {
                         formItem_arr.map((item,index) =>

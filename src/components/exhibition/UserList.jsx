@@ -40,7 +40,7 @@ const columns = [
         title: '状态',
         dataIndex: 'status',
         width: 150,
-        filters: [{text: '未报名', value: '未报名'},{text: '待开幕', value: '待开幕'},{text: '未签到', value: '未签到'},{text: '已签到', value: '已签到'},{text: '已结束', value: '已结束'}],
+        filters: [{text: '未报名', value: '未报名'},{text: '未签到', value: '未签到'},{text: '已签到', value: '已签到'},{text: '已结束', value: '已结束'}],
         render:(text) => {
             console.log()
             // eslint-disable-next-line default-case
@@ -48,10 +48,6 @@ const columns = [
                 case '未报名':
                     return(
                         <Tag>{text}</Tag>
-                    )
-                case '待开幕':
-                    return (
-                        <Tag color='green'>{text}</Tag>
                     )
                 case '未签到':
                     return (
@@ -112,13 +108,15 @@ const columns = [
 
 const EditableContext = React.createContext();
 
-const EditableRow = ({ form, index, ...props }) => (
-  <EditableContext.Provider value={form}>
-    <tr {...props} />
-  </EditableContext.Provider>
-);
+const EditableRow = ({ forms, index, ...props }) => {
+    return(
+        <EditableContext.Provider value={forms}>
+          <tr {...props} />
+        </EditableContext.Provider>
+      )
+};
 
-const EditableFormRow = Form.create()(EditableRow);
+ const EditableFormRow = Form.create()(EditableRow);
 
 class EditableCell extends React.Component {
   state = {
@@ -382,15 +380,13 @@ export default class Participants extends React.Component {
     // /**
     //  * 取消
     //  */
-    // handleCancel = () => {
-    //     this.Fetch({
-    //         current: 1,
-    //         pageSize: this.state.pagination.pageSize,
-    //         filter: {
-    //             state: ''
-    //         }
-    //     })
-    // }
+    handleCancel = () => {
+        this.Fetch({
+            current: 1,
+            pageSize: this.state.pagination.pageSize,
+            filter: []
+        })
+    }
     render() {
         let { pagination, dataSource, loading, searchValue } = this.state
         let components = {
@@ -434,7 +430,7 @@ export default class Participants extends React.Component {
                 rowKey={record => record.id}
                 columns={column}
                 rowClassName={() => 'editable-row'}
-                scroll={{x:1300, y:500}}
+                scroll={{x:1300, y:window.innerHeight*0.7}}
                 pagination={pagination}
                 dataSource={dataSource}
                 loading={loading}

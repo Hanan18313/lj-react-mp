@@ -40,6 +40,7 @@ export default class PrizeList extends React.Component {
             loading: false,
             dataSource: [],
             Columns: [
+                { title: '编号', dataIndex: 'prize_ser_num', key: 'prize_ser_num' },
                 { title: '奖品名', dataIndex: 'prize_name', key: 'prize_name' },
                 { title: '价格', dataIndex: 'price', key: 'price' },
                 { title: '图片', dataIndex: 'img_url', key: 'img_url',
@@ -138,7 +139,8 @@ export default class PrizeList extends React.Component {
                 })
                 this.setState({
                     dataSource: res.data.data,
-                    loading: false
+                    loading: false,
+                    pagination
                 })
             }
         })
@@ -157,7 +159,7 @@ export default class PrizeList extends React.Component {
                 <Table
                 rowKey={record => record.id}
                 columns={Columns}
-                scroll={{x:1300, y:500}}
+                scroll={{x:1300, y:window.innerHeight*0.7}}
                 pagination={pagination}
                 loading={loading}
                 dataSource={dataSource}

@@ -11,6 +11,11 @@ import '../public/css/App.css'
 import CreatePrize from './exhibition/CreatePrize';
 import EditPrize from './exhibition/EditPrize';
 import DrawPrize from './exhibition/DrawPrize'
+import Live from './exhibition/Live';
+import Issue from './easyAnswer/Issue'
+import CreateIssue from './easyAnswer/CreateIssue';
+import EditIssue from './easyAnswer/EditIssue';
+import IssueDetail from './easyAnswer/IssueDetail';
 const { url_list, DOMAIN } = CONFIG
 const { Sider, Content }  = Layout;
 const SubMenu = Menu.SubMenu;
@@ -27,6 +32,7 @@ export default class Center extends React.Component {
             url: url_list.getMenusSider,
             method: "GET",
         }).then(res => {
+            console.log(res)
             if(res.data.code === 200) {}
             this.setState({
                 menus: res.data.data
@@ -93,7 +99,7 @@ export default class Center extends React.Component {
                             })}
                         </Menu>
                     </Sider>
-                    <Layout style={{ padding: '0 0 24px 24px' }}>
+                    <Layout style={{ padding: '0 0 24px 24px', height: window.innerHeight }}>
                         <Content
                         style={{
                             background: '#fff',
@@ -110,6 +116,11 @@ export default class Center extends React.Component {
                                 <Route path="/exhibition/createPrize" component={CreatePrize}/>
                                 <Route path="/exhibition/editPrize" component={EditPrize}/>
                                 <Route path='/exhibition/drawPrizes' component={DrawPrize} />
+                                <Route path="/exhibition/live" component={Live} />
+                                <Route path="/easyAnswer/issue" component={Issue} />
+                                <Route path="/easyAnswer/createIssue" component={CreateIssue} />
+                                <Route path="/easyAnswer/editIssue" component={EditIssue} />
+                                <Route path="/easyAnswer/issueDetail" component={IssueDetail}/>
                                 <Redirect from='/' to='/index'/>
                             </Switch>
                         </Content>
