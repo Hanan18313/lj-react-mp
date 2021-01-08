@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, Divider } from 'antd';
+import { Table, Button, Divider, Tag } from 'antd';
 import Axios from 'axios';
 import CONFIG from '../../config/config';
 import moment from 'moment'
@@ -15,21 +15,33 @@ export default class Issue extends React.Component {
                 { title: '创建时间', dataIndex: 'createTime', key: 'createTime',
                 render:(text) => {
                     if(text) {
-                        return (<div>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</div>)
+                        return (<div>{moment(text).format('YYYY-MM-DD')}</div>)
                     }
                 }},
                 { title: '截止时间', dataIndex: 'deadline', key: 'deadline',
-                render:(text) => {
-                    if(text) {
-                        return (<div>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</div>)
+                    render:(text) => {
+                        if(text) {
+                            return (<div>{moment(text).format('YYYY-MM-DD')}</div>)
+                        }
                     }
-                }},
+                },
+                { title: '进行状态', dataIndex: 'status', key: 'status',
+                    render:(text) => {
+                        if (text === '未开始') {
+                            return (<Tag color="orange">{text}</Tag>)
+                        } else if (text === '进行中') {
+                            return (<Tag color="green">{text}</Tag>)
+                        } else {
+                            return (<Tag color="red">{text}</Tag>)
+                        }
+                    }
+                },
                 { title: '操作', dataIndex: 'operation', key: '', render: (text, record) =>
                 // eslint-disable-next-line jsx-a11y/anchor-is-valid
                     <div>
-                        <a onClick={() => this.handleDetail(record.id) }>详情</a>
-                        <Divider type="vertical"/>
-                        <a onClick={() => this.handleEdit(record.id) }>编辑</a>
+                        {/* <a onClick={() => this.handleDetail(record.id) }>详情</a>
+                        <Divider type="vertical"/> */}
+                        <a onClick={() => this.handleEdit(record.id) }>详情</a>
                     </div>
                 }
             ],
