@@ -15,7 +15,9 @@ import Live from './exhibition/Live';
 import Issue from './easyAnswer/Issue'
 import CreateIssue from './easyAnswer/CreateIssue';
 import EditIssue from './easyAnswer/EditIssue';
-import IssueDetail from './easyAnswer/IssueDetail';
+import QuizList from './quiz/QuizLIst';
+import EditQuiz from './quiz/EditQuiz';
+
 const { url_list, DOMAIN } = CONFIG
 const { Sider, Content }  = Layout;
 const SubMenu = Menu.SubMenu;
@@ -27,17 +29,17 @@ export default class Center extends React.Component {
         openKeys: ['index']
     }
 
+
     componentDidMount() {
         Fetch({
             url: url_list.getMenusSider,
             method: "GET",
         }).then(res => {
-            console.log(res)
-            if(res.data.code === 200) {}
-            this.setState({
-                menus: res.data.data
-            })
-            // console.log(res)
+            if(res.data.code === 200) {
+                this.setState({
+                    menus: res.data.data
+                })
+            }
         })
     }
     
@@ -120,7 +122,9 @@ export default class Center extends React.Component {
                                 <Route path="/easyAnswer/issue" component={Issue} />
                                 <Route path="/easyAnswer/createIssue" component={CreateIssue} />
                                 <Route path="/easyAnswer/editIssue" component={EditIssue} />
-                                <Route path="/easyAnswer/issueDetail" component={IssueDetail}/>
+
+                                <Route path="/quiz/list" component={QuizList} />
+                                <Route path="/quiz/edit" component={EditQuiz} />
                                 <Redirect from='/' to='/index'/>
                             </Switch>
                         </Content>

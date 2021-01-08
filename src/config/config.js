@@ -1,6 +1,6 @@
 const config = {
     dev: {
-        DOMAIN: "http://192.168.50.80:9001"
+        DOMAIN: "http://192.168.50.81:9001"
     },
     pro: {
         DOMAIN: "https://mp.langjie.com"
@@ -26,6 +26,8 @@ const url_list = {
     updateUserLotteryNumber: '/exhibition/userLotteryNumber',
     searchUserInfoByNameOrCompany: '/exhibition/searchUserInfo',
     updateLiveRoomWinnerInfo: '/exhibition/liveRoomWinnerInfo',
+
+    
     getEasyAnswerTitleList: '/easyAnswer/titleList',
     updateEasyAnswerTitleInfo: '/easyAnswer/titleInfo',
     createEasyAnswerTitleInfo: '/easyAnswer/titleInfo',
@@ -33,7 +35,15 @@ const url_list = {
     getEasyAnswerTitleWithAnswerById: '/easyAnswer/singleTitleWithAnswerInfo',
     deleteEasyAnswerTitleById: '/easyAnswer/titleInfo',
     getEasyAnswerTitleByIdWithAnswerList: '/easyAnswer/easyAnswerTitleByIdWithAnswerList',
-    exportAnswerInfoListToExcel: '/easyAnswer/exportExcel'
+    exportAnswerInfoListToExcel: '/easyAnswer/exportExcel',
+    updateTitleStatus: '/easyAnswer/titleStatus',
+    sendMessage: '/easyAnswer/sendMessage',
+
+    getQuizList: '/quiz/list',
+    getQuizInfoWithAnswersById: '/quiz/infoWithAnswers',
+    createQuizPlan: '/quiz/quizPlan',
+    getQuizPlan: '/quiz/quizPlan',
+    updateInitScore: '/quiz/initScore'
 
 }
 

@@ -83,6 +83,7 @@ export default class PrizeList extends React.Component {
             url: url_list.getPrizeList,
             method: 'GET',
         }).then(res => {
+            console.log(res)
             if(res.data.code === 200) {
                 res.data.data.map(item => {
                     item.img_url = DOMAIN + '/static/upload/' + item.img_url

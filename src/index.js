@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom';
 import { HashRouter } from 'react-router-dom';
 import Center from './components/Center';
 import * as serviceWorker from './serviceWorker';
-
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn')
 ReactDOM.render(
   <HashRouter>
     <Center />

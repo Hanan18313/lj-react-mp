@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import { Form, Icon as LegacyIcon } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Input, Button, DatePicker, Row, Col, Select, message } from 'antd';
+
+import { Input, Button, DatePicker, Row, Col, Select, message, InputNumber, Checkbox } from 'antd';
 import { CloseOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import Fetch from '../../config/fetch';
 import CONFIG from '../../config/config'
@@ -27,7 +28,8 @@ class AppendIssueItems extends React.Component {
         const appendIssue = {
             topic: '',
             options: ['','','',''],
-            correctResult: 'A'
+            correctResult: 'A',
+            total: ''
         };
         const issues = this.state.issues
         issues.push(appendIssue)
@@ -72,6 +74,26 @@ class AppendIssueItems extends React.Component {
         })
     }
 
+    handleChangeTotal = (e, k) => {
+        const { issues } = this.state
+        issues[k].total = e
+        this.setState({
+            issues,
+        })
+    }
+
+    handleChangeCheckBox = (e, k) => {
+
+        const { issues } = this.state
+        e.target.checked === false ?
+        issues[k].total = '' :
+        issues[k].total = '1'
+        this.setState({
+            issues
+        })
+        console.log(this.state)
+    }
+
     render() {
         const { issues } = this.state
         const renderIssueArr = [];
@@ -102,18 +124,31 @@ class AppendIssueItems extends React.Component {
                         )
                     })
                     issueItem.push(<div className="options" key={key}>{optionArr}</div>)
-                } else  {
+                } else if (key === 'correctResult')  {
                     issueItem.push(
                         <div key={key} className="solution">
                             <Row style={{display: 'flex', alignItems: 'center', margin: '10px 0'}}>
                                 <Col style={{display:'flex', justifyContent: 'flex-end'}} span={6}>正确答案：</Col>
                                 <Col span={18}>
-                                <Select defaultValue="A" onChange={(e) => this.handleSelectSolution(e,index)}>
+                                <Select defaultValue={issue[key]} onChange={(e) => this.handleSelectSolution(e,index)}>
                                     <Option value="A">A</Option>
                                     <Option value="B">B</Option>
                                     <Option value="C">C</Option>
                                     <Option value="D">D</Option>
                                 </Select>
+                                </Col>
+                            </Row>
+                        </div>
+                    )
+                } else if (key === 'total') {
+                    issueItem.push(
+                        <div key={key} className="total">
+                            <Row style={{display: 'flex', alignItems: 'center', margin: '10px 0'}}>
+                                <Col style={{display:'flex', justifyContent: 'flex-end'}} span={6}>
+                                    <Checkbox defaultChecked={issue[key] === '' ? false : true} onChange={(e) => this.handleChangeCheckBox(e, index)}>数量：</Checkbox>
+                                </Col>
+                                <Col span={18}>
+                                    <InputNumber min={1} max={1000} value={issue[key]} onChange={(e) => this.handleChangeTotal(e, index)} disabled={issue[key] === '' ? true : false}/>
                                 </Col>
                             </Row>
                         </div>
@@ -156,7 +191,7 @@ class CreateIssue extends React.Component {
         super()
         this.state = {
             labelProperty: {
-                title: { label: '标题', rules: [{required: true, message: '请输入奖品名称'}]},
+                title: { label: '标题', rules: [{required: true, message: '请输入标题'}]},
                 deadline: { label: '截止时间', rules: [{required: true, message: '请选择时间'}] }
             },
         }

@@ -16,7 +16,8 @@ class AppendIssueItems extends React.Component {
     constructor () {
         super()
         this.state = {
-            issues: []
+            issues: [],
+            disabled: false
         }
     }
     componentWillReceiveProps(parentProps){
@@ -32,7 +33,7 @@ class AppendIssueItems extends React.Component {
 
     render() {
 
-        const { issues } = this.state
+        const { issues, disabled } = this.state
         const renderIssueArr = [];
         
         issues.map((issue, index) => {
@@ -43,7 +44,7 @@ class AppendIssueItems extends React.Component {
                         <div key={key} className="topic">
                             <Row style={{display: 'flex', alignItems: 'center', margin: '10px 0'}}>
                                 <Col style={{display:'flex', justifyContent: 'flex-end'}} span={6}>问题：</Col>
-                                <Col span={18}><Input disabled={true} defaultValue={issue[key]} onChange={(v) => this.handleInputTopic(v,index) } /></Col>
+                                <Col span={18}><Input disabled={disabled} defaultValue={issue[key]} onChange={(v) => this.handleInputTopic(v,index) } /></Col>
                             </Row>
                         </div> 
                     )
@@ -55,7 +56,7 @@ class AppendIssueItems extends React.Component {
                             <div key={idx} className="option">
                                 <Row style={{display: 'flex', alignItems: 'center', margin: '10px 0'}}>
                                     <Col style={{display:'flex', justifyContent: 'flex-end'}} span={6}>{EN_LETTER[idx]}选项：</Col>
-                                    <Col span={18}><Input disabled={true} defaultValue={item} onChange={(v) => this.handleInputOption(v, index, idx)} /></Col>
+                                    <Col span={18}><Input disabled={disabled} defaultValue={item} onChange={(v) => this.handleInputOption(v, index, idx)} /></Col>
                                 </Row>
                             </div> 
                         )
@@ -67,7 +68,7 @@ class AppendIssueItems extends React.Component {
                             <Row style={{display: 'flex', alignItems: 'center', margin: '10px 0'}}>
                                 <Col style={{display:'flex', justifyContent: 'flex-end'}} span={6}>正确答案：</Col>
                                 <Col span={18}>
-                                <Select defaultValue={issue[key]} onChange={(e) => this.handleSelectSolution(e,index)} disabled={true}>
+                                <Select defaultValue={issue[key]} onChange={(e) => this.handleSelectSolution(e,index)} disabled={disabled}>
                                     <Option value="A">A</Option>
                                     <Option value="B">B</Option>
                                     <Option value="C">C</Option>
@@ -123,6 +124,7 @@ class IssueDetailForm extends React.Component {
                 deadline: { label: '截止时间', rules: [{type: 'object',required: true, message: '请选择时间'}] }
             },
             issues: [],
+            disabled: false,
             dataSource: [],
             column: column,
             pagination: {
@@ -181,7 +183,7 @@ class IssueDetailForm extends React.Component {
 
     render() {
         const formItem = [];
-        const { labelProperty, issues, column, dataSource, pagination } = this.state;
+        const { labelProperty, issues, column, dataSource, pagination, disabled } = this.state;
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
 			labelCol: {
@@ -197,7 +199,7 @@ class IssueDetailForm extends React.Component {
                     {getFieldDecorator(key, {
                             rules: labelProperty[key].rules
                         })(
-                            <DatePicker disabled={true} format={'YYYY-MM-DD'} />
+                            <DatePicker disabled={disabled} format={'YYYY-MM-DD'} />
                         )}
                 </FormItem>)
             } else {
@@ -205,7 +207,7 @@ class IssueDetailForm extends React.Component {
                     {getFieldDecorator(key, {
                             rules: labelProperty[key].rules
                         })(
-                            <Input disabled={true} name="" />
+                            <Input disabled={disabled} name="" />
                         )}
                 </FormItem>)
             }
