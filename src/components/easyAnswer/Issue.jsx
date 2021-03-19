@@ -153,7 +153,7 @@ export default class Issue extends React.Component {
                 <div>
                     <Table
                     rowKey={record => record.id}
-                    scroll={{x: 800, y: window.innerHeight*0.7}}
+                    scroll={{x: 800, y: window.innerHeight*0.6}}
                     columns={columns}
                     dataSource={dataSource}
                     pagination={pagination}
