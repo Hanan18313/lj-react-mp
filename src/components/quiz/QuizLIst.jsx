@@ -8,7 +8,7 @@ import moment from 'moment'
 
 function Tags (props) {
     const { text } = props
-    if (text === '已结束') {
+    if (text === '已揭晓') {
         return <Tag color='error' >{text}</Tag>
     } else if (text === '进行中') {
         return <Tag color='success'>{text}</Tag>
@@ -96,9 +96,21 @@ export default class QuizList extends React.Component {
     constructor() {
         super()
         this.state = {
+            pagination: {
+                current: 1,
+                pageSize: 10,
+                pageSizeOptions: [10, 30, 50, 100],
+                showSizeChanger: true,
+                total: 0,
+                onChange: this.handleChangePage,
+                onShowSizeChange: this.handleChangePageSize
+            },
             columns: [
+                { title : '期数', dataIndex: 'id', key: 'id', render:(text) => <span>第{text}期竞猜</span>},
                 { title: '竞猜题目', dataIndex: 'title', key: 'title', width: 220 },
-                { title: '结果', dataIndex: 'correctAnswer', key: 'correctAnswer' },
+                { title: '结果', dataIndex: 'correctAnswer', key: 'correctAnswer', render:(text) => (
+                    <span style={{color: text === '涨' ? 'red' : 'green'}}>{text}</span>
+                ) },
                 { title: '开盘指数', dataIndex: 'openPrice', key: 'openPrice' },
                 { title: '收盘指数', dataIndex: 'closePrice', key: 'closePrice' },
                 { title: '初始元宝分', dataIndex: 'initScore', key: 'initScore' },
@@ -111,14 +123,66 @@ export default class QuizList extends React.Component {
         }
     }
 
-    componentDidMount() {
+    handleChangePage = (page, pageSize) => {
+        const { pagination } = this.state
+        pagination.current = page
+        pagination.pageSize = pageSize
+        this.setState({
+            pagination
+        })
+        this.changeFetch({
+            page,
+            pageSize
+        })
+    }
+
+    handleChangePageSize = (current, size) => {
+        const { pagination } = this.state
+        pagination.current = current
+        pagination.pageSize = size
+        this.setState({
+            pagination
+        })
+        this.changeFetch({
+            page: current,
+            pageSize: size
+        })
+    }
+
+    changeFetch(param) {
+        const { pagination } = this.state
         Fetch({
             url: config.url_list.getQuizList,
-            method: 'GET'
+            method: 'GET',
+            queryData: param
         }).then(res => {
             if (res.data.data.code === 200) {
+                pagination.total = res.data.data.data[1]
                 this.setState({
-                    dataSource: res.data.data.data
+                    dataSource: res.data.data.data[0],
+                    pagination
+                })
+            }
+        })
+    }
+
+
+
+    componentDidMount() {
+        const { pagination } = this.state
+        const param = {
+            page: pagination.current,
+            pageSize: pagination.pageSize
+        }
+        Fetch({
+            url: config.url_list.getQuizList,
+            method: 'GET',
+            queryData: param
+        }).then(res => {
+            if (res.data.data.code === 200) {
+                pagination.total = res.data.data.data[1]
+                this.setState({
+                    dataSource: res.data.data.data[0]
                 })
             }
         })
@@ -132,15 +196,16 @@ export default class QuizList extends React.Component {
    
 
     render() {
-        const { columns, dataSource } = this.state
+        const { columns, dataSource, pagination } = this.state
         return (
             <div>
                 <div><DrawerComponent/></div>
                 <Table
                 rowKey={record => record.id}
                 columns={columns}
-                scroll={{x: 1200, y: window.innerHeight*0.7}}
+                scroll={{x: 1200, y: window.innerHeight*0.6}}
                 dataSource={dataSource}
+                pagination={pagination}
                 ></Table>
             </div>
         )

@@ -38,7 +38,6 @@ class AppendIssueItems extends React.Component {
             topic: '',
             options: ['','','',''],
             correctResult: 'A',
-            total: 0
         };
         const issues = this.state.issues
         issues.push(appendIssue)
@@ -83,24 +82,24 @@ class AppendIssueItems extends React.Component {
         })
     }
 
-    handleChangeTotal = (e, k) => {
-        const { issues } = this.state
-        issues[k].total = e
-        this.setState({
-            issues,
-        })
-    }
+    // handleChangeTotal = (e, k) => {
+    //     const { issues } = this.state
+    //     issues[k].total = e
+    //     this.setState({
+    //         issues,
+    //     })
+    // }
 
-    handleChangeCheckBox = (e, k) => {
+    // handleChangeCheckBox = (e, k) => {
 
-        const { issues } = this.state
-        e.target.checked === false ?
-        issues[k].total = '' :
-        issues[k].total = '1'
-        this.setState({
-            issues
-        })
-    }
+    //     const { issues } = this.state
+    //     e.target.checked === false ?
+    //     issues[k].total = '' :
+    //     issues[k].total = '1'
+    //     this.setState({
+    //         issues
+    //     })
+    // }
 
     render() {
 
@@ -149,20 +148,21 @@ class AppendIssueItems extends React.Component {
                             </Row>
                         </div>
                     )
-                } else if (key === 'total') {
-                    issueItem.push(
-                        <div key={key} className="total">
-                            <Row style={{display: 'flex', alignItems: 'center', margin: '10px 0'}}>
-                                <Col style={{display:'flex', justifyContent: 'flex-end'}} span={6}>
-                                    <Checkbox disabled={disabled} defaultChecked={issue[key] === '' ? false : true} onChange={(e) => this.handleChangeCheckBox(e, index)}>数量：</Checkbox>
-                                </Col>
-                                <Col span={18}>
-                                    <InputNumber min={1} max={1000} value={issue[key]} onChange={(e) => this.handleChangeTotal(e, index)} disabled={disabled ? true : issue[key] === '' ? true : false}/>
-                                </Col>
-                            </Row>
-                        </div>
-                    )
                 }
+                //  else if (key === 'total') {
+                //     issueItem.push(
+                //         <div key={key} className="total">
+                //             <Row style={{display: 'flex', alignItems: 'center', margin: '10px 0'}}>
+                //                 <Col style={{display:'flex', justifyContent: 'flex-end'}} span={6}>
+                //                     <Checkbox disabled={disabled} defaultChecked={issue[key] === '' ? false : true} onChange={(e) => this.handleChangeCheckBox(e, index)}>数量：</Checkbox>
+                //                 </Col>
+                //                 <Col span={18}>
+                //                     <InputNumber min={1} max={1000} value={issue[key]} onChange={(e) => this.handleChangeTotal(e, index)} disabled={disabled ? true : issue[key] === '' ? true : false}/>
+                //                 </Col>
+                //             </Row>
+                //         </div>
+                //     )
+                // }
             }
             renderIssueArr.push(
                 <div key={index} style={{width: '50%'}}>
@@ -216,7 +216,9 @@ class EditIssueForm extends React.Component {
         this.state = {
             labelProperty: {
                 title: { label: '标题', rules: [{required: true, message: '请输入奖品名称'}]},
+                score: { label: '分值', rules: [{required: true, message: '请输入元宝分值'}] },
                 deadline: { label: '截止时间', rules: [{type: 'object',required: true, message: '请选择时间'}] },
+                total: { label: '数量', rules: [{required: false}], checkTotalBox: false, checkBoxDisabeld: false },
                 status: { label: '问卷当前状态' }
             },
             issues: [],
@@ -255,21 +257,37 @@ class EditIssueForm extends React.Component {
             }
         }).then(res => {
             if (res.data.data.code === 200) {
-            
                 const data = res.data.data.data[0]
-                const disabled = data.EaTitle_status === '未开始' ? false : true
+                const { labelProperty } = this.state
+                let disabled = false
+               // const disabled = data.EaTitle_status === '未开始' ? false : true
+                if (data.EaTitle_status === '未开始') {
+                    disabled = false
+                    labelProperty.total.checkBoxDisabeld = false
+                    if (data.EaTitle_total && data.EaTitle_total > 0) {
+                        labelProperty.total.checkTotalBox = true
+                    } else {
+                        labelProperty.total.checkTotalBox = false
+                    }
+                } else {
+                    labelProperty.total.checkBoxDisabeld = true
+                    disabled = true
+                }
                 const nextStatus = data.EaTitle_status === '未开始' ? '进行中' : '已关闭'
                 const lastestStatusDisabled = data.EaTitle_status === '已关闭' ? true : false
                 this.props.form.setFieldsValue({
                     title: data.EaTitle_title,
                     deadline: moment(data.EaTitle_deadline, 'YYYY-MM-DD'),
-                    status: data.EaTitle_status
+                    status: data.EaTitle_status,
+                    score: data.EaTitle_score,
+                    total: data.EaTitle_total
                 })
                 this.setState({
                     issues: data.issue,
                     nextStatus,
                     disabled,
-                    lastestStatusDisabled
+                    lastestStatusDisabled,
+                    labelProperty
                 })
             }
             
@@ -277,6 +295,7 @@ class EditIssueForm extends React.Component {
     }
 
     fetchAnswerList = (id) => {
+        const dataSource = []
         Axios({
             url: DOMAIN + url_list.getEasyAnswerTitleByIdWithAnswerList,
             method: "GET",
@@ -290,12 +309,31 @@ class EditIssueForm extends React.Component {
                     title: data.title,
                     deadline: moment(data.deadline, 'YYYY-MM-DD'),
                 })
+                data.answer.map(items => {
+                    if (items.company.indexOf('杭州朗杰') === -1) {
+                        dataSource.push(items)
+                    }
+                })
                 this.setState({
                     issues: data.issue,
-                    dataSource: data.answer
+                    dataSource: dataSource
                 })
             }
             
+        })
+    }
+    exportExcel = () => {
+        let id = this.props.location.search.split('=')[1]
+        Fetch({
+            url: url_list.exportAnswerInfoListToExcel,
+            method: 'GET',
+            queryData: {
+                id: id
+            }
+        }).then(res => {
+            if (res.data.data.code === 200) {
+                window.open(res.data.data.url)
+            }
         })
     }
 
@@ -396,9 +434,27 @@ class EditIssueForm extends React.Component {
             url: url_list.sendMessage,
             method: 'POST'
         }).then(res => {
-            if (res.data.data.code === 200) {
+            if (res.data.code === 200) {
                 message.success('推送成功')
             }
+        })
+    }
+
+    handleChangeCheckBox = (e, v) => {
+        console.log(e)
+        const { labelProperty } = this.state
+        labelProperty.total.checkTotalBox = e.target.checked
+        if (!e.target.checked) {
+            this.props.form.setFieldsValue({
+                total: undefined
+            })
+        } else {
+            this.props.form.setFieldsValue({
+                total: 1
+            })
+        }
+        this.setState({
+            labelProperty
         })
     }
 
@@ -410,44 +466,70 @@ class EditIssueForm extends React.Component {
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
 			labelCol: {
-				xs: { span: 6 },
+				xs: { span: 8 },
 			},
 			wrapperCol: {
-				xs: { span: 12 },
+				xs: { span: 16 },
 			},
 	    };
         for (let key in labelProperty) {
             if (key === 'deadline') {
-                formItem.push(<FormItem {...formItemLayout} label={labelProperty[key].label} >
-                    {getFieldDecorator(key, {
-                            rules: labelProperty[key].rules
-                        })(
-                            <DatePicker disabled={disabled} format={'YYYY-MM-DD'} />
-                        )}
-                </FormItem>)
+                formItem.push(<Col key={key} span={12}>
+                        <FormItem {...formItemLayout} label={labelProperty[key].label} >
+                            {getFieldDecorator(key, {
+                                    rules: labelProperty[key].rules
+                                })(
+                                    <DatePicker disabled={disabled} format={'YYYY-MM-DD'} />
+                                )}
+                        </FormItem>
+                    </Col>)
             } else if (key === 'status') {
-                formItem.push(<FormItem {...formItemLayout} label={labelProperty[key].label} >
+                formItem.push(<Col key={key} span={12}>
+                    <FormItem {...formItemLayout} label={labelProperty[key].label} >
+                        {getFieldDecorator(key, {
+                                rules: labelProperty[key].rules
+                            })(
+                                <Input disabled={true} width={100} />
+                            )}
+                    </FormItem>
+                </Col>)
+            } else if (key === 'score') {
+                formItem.push(<Col key={key} span={12}>
+                    <FormItem {...formItemLayout} label={labelProperty[key].label}>
                     {getFieldDecorator(key, {
-                            rules: labelProperty[key].rules
-                        })(
-                            <Input disabled={true} width={100} />
-                        )}
-                </FormItem>)
+                        rules: labelProperty[key].rules
+                    })(
+                        <InputNumber min={0} disabled={disabled} name="" />
+                    )}
+                    </FormItem>
+                </Col>)
+            } else if (key === 'title') {
+                formItem.push(<Col key={key} span={12}>
+                    <FormItem {...formItemLayout} label={labelProperty[key].label} >
+                    {getFieldDecorator(key, {
+                        rules: labelProperty[key].rules
+                    })(
+                        <Input disabled={disabled} name="" />
+                    )}
+                    </FormItem>
+                </Col>)
             } else {
-                formItem.push(<FormItem {...formItemLayout} label={labelProperty[key].label} >
+                formItem.push(<Col key={key} span={12}>
+                    <FormItem {...formItemLayout} label={<Checkbox disabled={labelProperty.total.checkBoxDisabeld} checked={labelProperty.total.checkTotalBox} onChange={(e) => this.handleChangeCheckBox(e, key)}>数量：</Checkbox>} >
                     {getFieldDecorator(key, {
-                            rules: labelProperty[key].rules
-                        })(
-                            <Input disabled={disabled} name="" />
-                        )}
-                </FormItem>)
+                        rules: labelProperty[key].rules
+                    })(
+                        <InputNumber min={1} max={999} disabled={!labelProperty.total.checkTotalBox} name="" />
+                    )}
+                    </FormItem>
+                </Col>)
             }
-            
         }
         return (
             <div style={{height: '100%', overflow: 'auto'}}>
                 <Form onSubmit={this.handleSubmitForm}>
-                    {formItem.map((item, index) => <div key={index}>{item}</div>)}
+                    {/* <Row>{formItem.map((item, index) => <div key={index}>{item}</div>)}</Row> */}
+                    <Row>{formItem}</Row>
                     <AppendIssueItems onRef={(ref) => this.child = ref} issues={issues} disabled={disabled}></AppendIssueItems>
                     <FormItem style={{textAlign:'center'}}>
                         <Button type='primary' disabled={disabled} htmlType="submit" style={{marginRight:50}}>提交</Button>

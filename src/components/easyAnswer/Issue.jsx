@@ -3,6 +3,8 @@ import { Table, Button, Divider, Tag } from 'antd';
 import Axios from 'axios';
 import CONFIG from '../../config/config';
 import moment from 'moment'
+import Fetch from '../../config/fetch';
+import config from '../../config/config';
 const { url_list, DOMAIN } = CONFIG
 
 
@@ -10,6 +12,15 @@ export default class Issue extends React.Component {
     constructor() {
         super()
         this.state = {
+            pagination: {
+                current: 1,
+                pageSize: 10,
+                pageSizeOptions: [10, 30, 50, 100],
+                showSizeChanger: true,
+                total: 0,
+                onChange: this.handleChangePage,
+                onShowSizeChange: this.handleChangePageSize
+            },
             columns: [
                 { title: '标题', dataIndex: 'title', key: 'title',},
                 { title: '创建时间', dataIndex: 'createTime', key: 'createTime',
@@ -52,13 +63,73 @@ export default class Issue extends React.Component {
     }
 
     componentDidMount() {
-        Axios({
-            url: DOMAIN + url_list.getEasyAnswerTitleList,
+        // Axios({
+        //     url: DOMAIN + url_list.getEasyAnswerTitleList,
+        //     method: 'GET',
+        // }).then(res => {
+        //     if (res.data.data.code === 200) {
+        //         this.setState({
+        //             dataSource: res.data.data.data
+        //         })
+        //     }
+        // })
+        const { pagination } = this.state
+        Fetch({
+            url: config.url_list.getEasyAnswerTitleList,
             method: 'GET',
+            queryData: {
+                page: pagination.current,
+                pageSize: pagination.pageSize
+            }
         }).then(res => {
             if (res.data.data.code === 200) {
+                pagination.total = res.data.data.data[1]
                 this.setState({
-                    dataSource: res.data.data.data
+                    dataSource: res.data.data.data[0],
+                    pagination
+                })
+            }
+        })
+    }
+
+    handleChangePage = (page, pageSize) => {
+        const { pagination } = this.state
+        pagination.current = page
+        pagination.pageSize = pageSize
+        this.setState({
+            pagination
+        })
+        this.changeFetch({
+            page,
+            pageSize
+        })
+    }
+
+    handleChangePageSize = (current, size) => {
+        const { pagination } = this.state
+        pagination.current = current
+        pagination.pageSize = size
+        this.setState({
+            pagination
+        })
+        this.changeFetch({
+            page: current,
+            pageSize: size
+        })
+    }
+
+    changeFetch(param) {
+        const { pagination } = this.state
+        Fetch({
+            url: config.url_list.getEasyAnswerTitleList,
+            method: 'GET',
+            queryData: param
+        }).then(res => {
+            if (res.data.data.code === 200) {
+                pagination.total = res.data.data.data[1]
+                this.setState({
+                    dataSource: res.data.data.data[0],
+                    pagination
                 })
             }
         })
@@ -73,7 +144,7 @@ export default class Issue extends React.Component {
     }
 
     render() {
-        const { columns, dataSource } = this.state
+        const { columns, dataSource, pagination } = this.state
         return (
             <div>
                 <div style={{margin: "16px 0", display: 'flex', justifyContent: 'flex-end'}}>
@@ -85,6 +156,7 @@ export default class Issue extends React.Component {
                     scroll={{x: 800, y: window.innerHeight*0.7}}
                     columns={columns}
                     dataSource={dataSource}
+                    pagination={pagination}
                     ></Table>
                 </div>
             </div>

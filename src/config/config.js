@@ -1,6 +1,6 @@
 const config = {
     dev: {
-        DOMAIN: "http://192.168.50.81:9001"
+        DOMAIN: "http://192.168.50.83:9001"
     },
     pro: {
         DOMAIN: "https://mp.langjie.com"
@@ -43,12 +43,13 @@ const url_list = {
     getQuizInfoWithAnswersById: '/quiz/infoWithAnswers',
     createQuizPlan: '/quiz/quizPlan',
     getQuizPlan: '/quiz/quizPlan',
-    updateInitScore: '/quiz/initScore'
-
+    updateInitScore: '/quiz/initScore',
+    exportQuizAnswerListToExcel: '/quiz/exportExcel',
+    sendActivityNoticeToMember: '/quiz/activityProcessNotice'
 }
 
 export default {
-    ...config.dev,
+    ...config.pro,
     url_list,
     outer_url
 }

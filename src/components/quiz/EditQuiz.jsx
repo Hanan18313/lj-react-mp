@@ -4,7 +4,7 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 import Fetch from '../../config/fetch';
 import config from '../../config/config';
 import moment from 'moment';
-import TextArea from 'antd/lib/input/TextArea';
+const { url_list } = config
 const { Option } = Select
 const { Item } = Form
 
@@ -12,13 +12,14 @@ const { Item } = Form
 
 function ComponentTable(props) {
 
-    const { dataSource, loading, pagination } = props
+    const { dataSource, loading, pagination, parentProps } = props
     const columns = [
-        { title: '答案', dataIndex: 'answer', key: 'answer' },
-        { title: '提交时间', dataIndex: 'answerTime', key: 'answerTime', width: 160 },
         { title: '姓名', dataIndex: 'userName', key: 'userName' },
-        { title: '电话', dataIndex: 'phone', key: 'phone' },
         { title: '公司', dataIndex: 'company', key: 'company', width: 250 },
+        { title: '答案', dataIndex: 'answer', key: 'answer', render:(text) => (
+            <span style={{color: text === '涨' ? 'red':'green'}}>{text}</span>
+        ) },
+        { title: '竞猜时间', dataIndex: 'answerTime', key: 'answerTime', width: 160 },
         { title: '头像', dataIndex: 'avatar', key: 'avatar', render:(text, record) => (
             <Avatar src={text}/> )},
         { title: '投注元宝分', dataIndex: 'spend', key: 'spend' },
@@ -26,31 +27,35 @@ function ComponentTable(props) {
 
     ]
 
-    const data = []
-        for (let i = 0; i < 33; ++i) {
-            data.push({
-                key: i,
-                answer: '涨',
-                answerTime: '2020-12-10 15:22:22',
-                userName: '韩维龙',
-                phone: '17328867149',
-                company: '杭州朗杰',
-                avatar: 'https://thirdwx.qlogo.cn/mmopen/vi_32/7t7xrUArib83fsxRPtgRJTTL6BI9rkLAeX4OhzymeTsEicJZaVRGl2amtXcXLAKo3CCQq4wL8uXiaVPmiaSaabuKUw/132',
-                spend: '20',
-                inCome: '0'
-            });
-        }
+    const exportExcel = () => {
+        let id = parentProps.location.search.split('=')[1]
+        Fetch({
+            url: url_list.exportQuizAnswerListToExcel,
+            method: 'GET',
+            queryData: {
+                id: id
+            }
+        }).then(res => {
+            if (res.data.data.code === 200) {
+                window.open(res.data.data.url)
+            }
+        })
+    }
 
     return (
         <div>
-            <h3 style={{fontWeight: 600}}>竞猜统计</h3>
+            <div style={{display: 'flex', justifyContent: "space-between", margin: '10px 0'}}>
+                <h3 style={{fontWeight: 600}}>竞猜统计</h3>
+                <Button type="dashed" onClick={() => exportExcel()}>导出Excel</Button>
+            </div>
             <Table
             columns={columns}
             rowKey={record => record.id}
             dataSource={dataSource}
             loading={loading}
-            scroll={{x: 800, y: window.innerHeight*0.3}}
+            scroll={{x: 800, y: window.innerHeight*0.25}}
             pagination={pagination}
+            size='small'
             ></Table>
         </div>
     )
@@ -65,6 +70,7 @@ export default class EditQuiz extends React.Component {
                 current: 1,
                 pageSize: 500,
                 total: 0,
+                
                 showTotal:(total) => {
                     return(
                         <div style={{display:'flex', flexDirection:'row'}}>
@@ -74,14 +80,14 @@ export default class EditQuiz extends React.Component {
                 },
             },
             labelProperty: {
-                title: { label: '竞猜题目', rules: [{required: true, message: ''}], disabled: true },
+                period: { label: '期数', rules: [{required: false, message: ''}], disabled: true },
+                title: { label: '竞猜题目', rules: [{required: false, message: ''}], disabled: true },
                 correctAnswer: { label: '正确答案',rules: [{required: false, message: ''}], disabled: true },
-                titleStatus: { label: '状态', rules: [{required: true, message: ''}], disabled: true },
+                titleStatus: { label: '状态', rules: [{required: false, message: ''}], disabled: true },
                 initScore: { label: '初始元宝分', rules: [{required: false, message: ''}], disabled: false },
                 pool: { label: '总元宝分', rules: [{required: false, message: ''}], disabled: true },
                 openPrice: { label: '开盘指数', rules: [{required: false, message: ''}], disabled: true },
                 closePrice: { label: '收盘指数', rules: [{required: false, message: ''}], disabled: true },
-
                 
             },
             btnDisabled: false,
@@ -100,7 +106,6 @@ export default class EditQuiz extends React.Component {
                 id
             }
         }).then(res => {
-            console.log(res)
             if (res.data.data.code === 200) {
                 const data = res.data.data.data
                 data.answers.map(item => {
@@ -114,7 +119,8 @@ export default class EditQuiz extends React.Component {
                     initScore: data.initScore,
                     pool: data.pool,
                     openPrice: data.openPrice,
-                    closePrice: data.closePrice
+                    closePrice: data.closePrice,
+                    period: `第${data.id}期竞猜`
                 })
                 this.setState({
                     loading: false,
@@ -187,6 +193,23 @@ export default class EditQuiz extends React.Component {
         })
     }
 
+    handleClickNotice = () => {
+        let id = this.props.location.search.split('=')[1] - 1
+        Fetch({
+            url: config.url_list.sendActivityNoticeToMember,
+            method: 'POST',
+            formData: {
+                id
+            }
+        }).then(res => {
+            if (res.data.code === 200) {
+                message.success('操作成功')
+            } else {
+                message.error('操作失败')
+            }
+        })
+    }
+
     render() {
         const { labelProperty,  btnDisabled, loading, pagination, dataSource } = this.state
         const formItemArr = []
@@ -213,12 +236,13 @@ export default class EditQuiz extends React.Component {
                 >
                     <Row>{formItemArr}</Row>
                     <Item style={{textAlign: "center", paddingTop: 20}}>
+                        <Button disabled={btnDisabled} style={{marginRight: 50}} type='dashed' onClick={() => this.handleClickNotice()}>提醒</Button>
                         <Button disabled={btnDisabled} style={{marginRight: 50}} type='primary' htmlType='submit'>提交</Button>
                         <Button type='default' onClick={() => this.props.history.goBack()}>返回</Button>
                     </Item>
                 </Form>
                 <div>
-                   <ComponentTable dataSource={dataSource} loading={loading} pagination={pagination}/>
+                   <ComponentTable dataSource={dataSource} loading={loading} pagination={pagination} parentProps={this.props}/>
                 </div>
             </div>
         )
