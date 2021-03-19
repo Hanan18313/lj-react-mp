@@ -95,7 +95,6 @@ class EditPrizeForm extends React.Component {
             url: config.DOMAIN + config.url_list.getPrizeInfoById,
             params: params
         }).then(res => {
-            console.log(this.formRef.current)
             let data = res.data.data[0]
             this.props.form.setFieldsValue({
                 prize_ser_num: data.prize_prize_ser_num,

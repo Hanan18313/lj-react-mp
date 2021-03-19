@@ -105,7 +105,7 @@ export default class Center extends React.Component {
                         <Content
                         style={{
                             background: '#fff',
-                            padding: 24,
+                            padding: '24px 24px 0 24px',
                             margin: 0,
                             minHeight: 600,
                         }}
